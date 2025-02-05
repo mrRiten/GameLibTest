@@ -4,6 +4,7 @@ namespace SimpleBattleGameLib.InfrastructureModels
 {
     public class MapManager
     {
+        // Todo: if (!Map.IsValidPosition(buildActionItem.Position)) return; - Recode to Attribute
         public Map Map { get; set; }
 
         public void PlaceBuild(BuildActionItem buildActionItem, Player player)
@@ -39,6 +40,31 @@ namespace SimpleBattleGameLib.InfrastructureModels
             player.Builds.Remove(buildToRemove);
             Map.Builds.Remove(buildToRemove);
             Map.MapPlaces.Add(new Field(buildToRemove.MapPosition));
+        }
+
+        public void MoveSolder(SolderActionItem solderActionItem, Player player)
+        {
+            if (!Map.IsValidPosition([solderActionItem.CurrentPosition, solderActionItem.TargetPosition])) return;
+
+            if (Map.MapPlaces.FirstOrDefault(mp => mp.MapPosition == solderActionItem.TargetPosition) == null) return;
+
+            DeleteMapPlace(solderActionItem.TargetPosition);
+            Map.MapPlaces.Add(new Field(solderActionItem.CurrentPosition));
+
+            player.Entities.FirstOrDefault(s => s.MapPosition == solderActionItem.TargetPosition)
+                .MapPosition = solderActionItem.TargetPosition;
+        }
+
+        public void AttackSolder(SolderActionItem solderActionItem, Player player)
+        {
+            if (!Map.IsValidPosition([solderActionItem.CurrentPosition, solderActionItem.TargetPosition])) return;
+
+            var curentEntity = Map.Entities.FirstOrDefault(mp => mp.MapPosition == solderActionItem.CurrentPosition);
+            var targetEntity = Map.Entities.FirstOrDefault(mp => mp.MapPosition == solderActionItem.TargetPosition);
+
+            if (targetEntity == null) return;
+
+            targetEntity.Health -= curentEntity.Damage;
         }
 
         private void DeleteMapPlace(MapPosition mapPosition)

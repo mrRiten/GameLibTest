@@ -21,6 +21,19 @@ namespace SimpleBattleGameLib.InfrastructureModels
             return false;
         }
 
+        public bool IsValidPosition(IEnumerable<MapPosition> mapPositions)
+        {
+            foreach (var mapPosition in mapPositions)
+            {
+                if (!(IsValidCords(mapPosition) && IsValidPlace(mapPosition)))
+                {
+                    return false;
+                }
+            }
+            
+            return true;
+        }
+
         private bool IsValidPlace(MapPosition targetMapPosition)
         {
             var mapPlaceOccupied = MapPlaces

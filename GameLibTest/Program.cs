@@ -1,21 +1,57 @@
-﻿using SimpleBattleGameLib.InfrastructureModels;
+﻿using SimpleBattleGameLib.ApplicationModels;
+using SimpleBattleGameLib.InfrastructureModels;
 
 class Program
 {
     static void Main(string[] args)
     {
         // Создаем двух игроков
-        var firstPlayer = new Player("Игрок 1" );
+        var firstPlayer = new Player("Игрок 1");
         var secondPlayer = new Player("Игрок 2");
 
-        // Создаем генератор игры
-        var gameGenerator = new GameGenerator(firstPlayer, secondPlayer);
+        var gameManager = new GameManager(new List<Player>
+        {
+            firstPlayer,
+            secondPlayer
+        });
 
-        // Генерируем карту
-        Map generatedMap = gameGenerator.GenerateMap();
+        gameManager.StartGame();
 
-        // Выводим карту в консоль
-        PrintMap(generatedMap);
+        PrintMap(gameManager.MapManager.Map);
+
+        var build = new BuildActionItem(BuildType.Mine, new MapPosition { X = 0, Y = 0 }, BuildAction.Build);
+
+
+        var step = new PlayerStep(gameManager.CurrentStepPlayer,
+            new BuildStep([build]),
+            null);
+
+        gameManager.DoStep(step);
+
+        PrintMap(gameManager.MapManager.Map);
+
+        build = new BuildActionItem(BuildType.Mine, new MapPosition { X = 0, Y = 0 }, BuildAction.Build);
+
+
+        step = new PlayerStep(gameManager.CurrentStepPlayer,
+            new BuildStep([build]),
+            null);
+
+        gameManager.DoStep(step);
+
+        PrintMap(gameManager.MapManager.Map);
+
+        build = new BuildActionItem(new MapPosition { X = 8, Y = 8 }, BuildAction.Destroy);
+
+
+        step = new PlayerStep(gameManager.CurrentStepPlayer,
+            new BuildStep([build]),
+            null);
+
+        gameManager.DoStep(step);
+
+        PrintMap(gameManager.MapManager.Map);
+
     }
 
     static void PrintMap(Map map)
@@ -39,7 +75,14 @@ class Program
             {
                 displayMap[townHall.MapPosition.X, townHall.MapPosition.Y] = '^';
             }
+
+            if (build is Mine mine)
+            {
+                displayMap[mine.MapPosition.X, mine.MapPosition.Y] = '$';
+            }
         }
+
+        Console.WriteLine("\n\n");
 
         // Выводим карту в консоль
         for (int y = 0; y < 10; y++)

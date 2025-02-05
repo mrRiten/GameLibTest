@@ -9,13 +9,14 @@ namespace SimpleBattleGameLib.InfrastructureModels
 
         public void Execute()
         {
+            // Todo: refactor ExecuteBuild & ExecuteSolder, mb recode to generic
             ExecuteBuild();
             ExecuteSolder();
         }
 
         private void ExecuteBuild()
         {
-            var buildActionItem = _playerStep.BuildStep.BuildActionItem;
+            var buildActionItem = _playerStep.BuildStep?.BuildActionItem;
 
             if (buildActionItem == null) return;
 
@@ -36,8 +37,24 @@ namespace SimpleBattleGameLib.InfrastructureModels
 
         private void ExecuteSolder()
         {
-            // Todo: Code
-            return;
+            var solderActionItem = _playerStep.SolderStep?.SolderActionItems;
+
+            if (solderActionItem == null) return;
+
+            foreach (var item in solderActionItem)
+            {
+                var action = (SolderAction)item.Action;
+
+                if (action == SolderAction.Attack)
+                {
+                    _mapManager.AttackSolder(item, _playerStep.Player);
+                }
+                else if (action == SolderAction.Move)
+                {
+                    _mapManager.MoveSolder(item, _playerStep.Player);
+                }
+            }
         }
+
     }
 }

@@ -2,10 +2,12 @@
 
 namespace SimpleBattleGameLib.InfrastructureModels
 {
-    public class GameGenerator(Player firstPlayer, Player secondPlayer)
+    public class GameGenerator(Player firstPlayer, Player secondPlayer, MapManager mapManager)
     {
         public Player FirstPlayer { get; set; } = firstPlayer;
         public Player SecondPlayer { get; set; } = secondPlayer;
+
+        private readonly MapManager _mapManager = mapManager;
 
         private readonly Random _random = new();
 
@@ -39,10 +41,13 @@ namespace SimpleBattleGameLib.InfrastructureModels
                 X = _random.Next(0, 10), // Случайная позиция по X
                 Y = _random.Next(0, 5)    // Случайная позиция по Y (от 0 до 4)
             };
+
             var firstPlayerTownHall = new TownHall(firstPlayerTownHallPosition);
             map.Builds.Add(firstPlayerTownHall);
             FirstPlayer.TownHall = firstPlayerTownHall;
             FirstPlayer.Builds.Add(firstPlayerTownHall);
+
+            map.MapPlaces.Remove(map.MapPlaces.FirstOrDefault(mp => mp.MapPosition == firstPlayerTownHallPosition));
 
             // Генерация случайной позиции для TownHall второго игрока (нижняя область: y от 5 до 9)
             var secondPlayerTownHallPosition = new MapPosition
@@ -50,8 +55,13 @@ namespace SimpleBattleGameLib.InfrastructureModels
                 X = _random.Next(0, 10), // Случайная позиция по X
                 Y = _random.Next(5, 10)   // Случайная позиция по Y (от 5 до 9)
             };
+            
             var secondPlayerTownHall = new TownHall(secondPlayerTownHallPosition);
             map.Builds.Add(secondPlayerTownHall);
+            SecondPlayer.TownHall = secondPlayerTownHall;
+            SecondPlayer.Builds.Add(secondPlayerTownHall);
+
+            map.MapPlaces.Remove(map.MapPlaces.FirstOrDefault(mp => mp.MapPosition == secondPlayerTownHallPosition));
 
             return map;
         }
