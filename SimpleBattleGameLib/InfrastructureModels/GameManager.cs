@@ -37,8 +37,6 @@
 
         public void DoStep(PlayerStep playerStep)
         {
-            // Todo: PlayerStep Parser
-
             var stepExecuter = new PlayerStepExecutor(playerStep, MapManager);
 
             stepExecuter.Execute();
