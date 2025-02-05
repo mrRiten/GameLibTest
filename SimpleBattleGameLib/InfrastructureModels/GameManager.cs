@@ -39,7 +39,7 @@
         {
             var stepExecuter = new PlayerStepExecutor(playerStep, MapManager);
 
-            stepExecuter.Execute();
+            stepExecuter.Execute(); // All income logic inside Execute()
 
             SetNextPlayerStep();
         }

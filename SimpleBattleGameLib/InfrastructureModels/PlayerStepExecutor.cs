@@ -12,6 +12,30 @@ namespace SimpleBattleGameLib.InfrastructureModels
             // Todo: refactor ExecuteBuild & ExecuteSolder, mb recode to generic
             ExecuteBuild();
             ExecuteSolder();
+
+            ExecuteIncome();
+        }
+
+        private void ExecuteIncome()
+        {
+            var player = _playerStep.Player;
+
+            foreach (var build in player.Builds)
+            {
+                if (build.ActionPoint >= build.PointToAction)
+                {
+                    // Todo: action by build (baraks)
+
+                    if (build.GetType() == typeof(Mine))
+                    {
+                        player.Money += 10;
+                    }
+
+                    build.ActionPoint = 0;
+                }
+
+                build.ActionPoint += 1;
+            }
         }
 
         private void ExecuteBuild()
